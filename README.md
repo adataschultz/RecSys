@@ -12,11 +12,12 @@ The `Clothing_Shoes_and_Jewelry` ratings data was retrieved from https://jmcaule
 Models were trained using:
 - `surprise` library
 - `scipy` library
-- A created popularity recommender model 
+- A created popularity recommender model
+- A ranking model using `tensorflow-recommenders`
 
 For the initial training of the models using `surprise`:
-- The default parameters of `SVD`, `SVDpp` `BaselineOnly`, `KNNBaseline`, `KNNBasic`, `KNNWithMeans`, `KNNWithZScore`, `CoClustering`, `SVD`, `SVDpp`, `NMF`, `NormalPredictor` were evaluated using the `cross_validate` method to determine which algorithm yielded the lowest RMSE error. Cross validation using a model with arbitrary parameters was performed and predictions made.
-- Then hyperparameter optimization was performed to find the best parameters for this model type.
+- The default parameters of `SVD`, `SVDpp` `BaselineOnly`, `KNNBaseline`, `KNNBasic`, `KNNWithMeans`, `KNNWithZScore`, `CoClustering`, `SVD`, `SVDpp`, `NMF`, `NormalPredictor` were evaluated using the `cross_validate` method to determine which algorithm yielded the lowest RMSE errors. Cross validation using a model with arbitrary parameters was performed and predictions made.
+- Then hyperparameter optimization was performed to find the best parameters for the top three model types (`SVDpp`, `KNNBaseline` and `SVD`).
 
 For the training of the SVD based models using `SciPy`:
 - A rating matrix with items and reviewers was constructed.
@@ -28,3 +29,12 @@ For the construction of the popularity recommender model:
 - A recommendation score was created by counting each reviewer for each unique item.
 - This score was sorted and a recommendation rank was created based on scoring.
 - Predictions were then calculated for various reviewers.
+
+For the construction of the ranking recommender model:
+- The data was loaded in a `tensorflow` dataset and partitioned into train/test sets.
+- A vocabulary was generated to map the feature values to embedding vectors.
+- The model used an `embedding_dimension = 64` and contained multiple stacked dense layers with `activation='relu`.
+- Raw features were used as input to `compute_loss` and `MeanSquaredError` was used for the loss metric.
+- The model was fit for 20 epochs and evaluated.
+- The ranking model was tested by computing predictions for items and ranking by the predictions made.
+- The model was saved and exported for serving purpose in `TensorFLow Lite`.
